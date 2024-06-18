@@ -1,0 +1,60 @@
+/* styles.css */
+
+/* Add this at the end of your existing CSS */
+
+.subscribe-section {
+    background: linear-gradient(45deg, #6b89a1, #9ac3eb);
+    padding: 50px 0px;
+    color: white;
+    text-align: center;
+  }
+  
+  .subscribe-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .subscribe-section p {
+    font-size: 1.25rem;
+    margin-bottom: 30px;
+  }
+  
+  .subscribe-form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .subscribe-form input[type="email"] {
+    color: black;
+    padding: 15px;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    width: 70%;
+    font-size: 1rem;
+  }
+  
+  .subscribe-form button {
+    padding: 15px;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    background: #fff;
+    color: #6b89a1;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .subscribe-form button:hover {
+    background: #575757;
+    color: white;
+    transition: background 0.3s;
+  }
+  
+  .subscribe-form input::placeholder {
+    color: #747474;
+  }
+  

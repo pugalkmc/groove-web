@@ -1,0 +1,33 @@
+.btn-submit {
+  background-color: rgb(48, 81, 118);
+  width: fit-content;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: rgba(10, 30, 52, 0.996);
+  color: white;
+  transition: all 0.3s;
+}
+
+.bot-control-label {
+  min-width: 20%;
+}
+
+@media (max-width: 576px) {
+  .project-details-form,
+  .project-details-container {
+    padding: 0 15px;
+  }
+
+  .bot-control-label {
+    min-width: 25%;
+  }
+/*  */
+}
+
+.instruction-img {
+  width: 10%;
+  height: 100%
+}

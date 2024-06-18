@@ -1,0 +1,84 @@
+body {
+    padding: 0;
+    margin: 0;
+    background: linear-gradient(to right, #e9f4ff, #8ac6ff);
+    font-family: Arial, sans-serif;
+  }
+  
+  #body {
+    margin-top: 20px;
+  }
+  
+  .auth-title {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 2.5rem;
+    max-width: 300px;
+  }
+  
+  .brand {
+    text-decoration: none;
+    color: black;
+  }
+  
+  .brand p {
+    font-size: large;
+    margin: 0;
+  }
+  
+  .already-register {
+    font-size: large;
+  }
+  
+  .empower-text {
+    font-size: 2rem;
+  }
+  
+  .create-account-container {
+    background-color: #ffffff; /* White background for form container */
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for a professional look */
+    padding: 20px;
+  }
+  
+  .form-control {
+    height: 40px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25); /* Blue glow on focus */
+  }
+  
+  .alert-danger {
+    margin-top: 10px;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  
+
+  .text-bold {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+  }
+
+  .btn-submit {
+    background-color: rgba(62, 97, 138, 0.881);
+    width: 100%;
+    color: white;
+  }
+
+  .btn-submit:hover {
+    background-color: rgba(29, 64, 101, 0.996);
+    color: white;
+  }
+
+  

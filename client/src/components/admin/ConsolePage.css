@@ -1,0 +1,169 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Profile page styling */
+.profile-details-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+/* FAQ Page styling */
+.faq-btn {
+  width: 100%;
+  text-align: start;
+}
+
+/* Console page styling */
+.console-page {
+  background-color: rgb(215, 226, 236);
+  min-height: 100vh;
+}
+
+.option {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 0;
+}
+
+.option nav {
+  width: 100%;
+}
+
+.option-item {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 50px;
+  background-color: #e9ecef;
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #343a40;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.option-item-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.option-item:hover {
+  background-color: #264f71;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.active-stick {
+  height: 100%;
+  width: 5px;
+  background-color: transparent;
+  transition: background-color 0.3s;
+}
+
+.nav-active .active-stick {
+  background-color: rgb(255, 255, 255);
+}
+
+.nav-active {
+  background-color: #40698a;
+  color: white;
+}
+
+.nav-active p {
+  margin: 0;
+  padding: 0;
+}
+
+
+.console-page h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.console-page .form-label {
+  font-weight: bold;
+}
+
+.console-page .upload-box {
+  width: 100px;
+  height: 100px;
+  background-color: #e3f2fd;
+  border: 2px dashed #90caf9;
+  border-radius: 8px;
+}
+
+.console-page .btn-light {
+  background-color: #ffffff;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* 
+@media (max-width: 992px) {
+  
+  .option {
+    border-right: none;
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  .option-item {
+    height: auto;
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+  
+  .option-item p {
+    margin: 0;
+  }
+
+  .active-stick {
+    width: 100%;
+    height: 5px;
+  }
+
+  .nav-active .active-stick {
+    background-color: #fff;
+  }
+
+  .option nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .option-item-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .option nav {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+  
+  .option-item {
+    font-size: 0.8rem;
+  }
+  
+  .option-item-container {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .option-item p {
+    margin: 0;
+  }
+} */
