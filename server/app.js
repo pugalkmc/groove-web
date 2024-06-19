@@ -178,7 +178,7 @@ app.post("/api/project/source/link", authMiddleware, async (req, res) => {
 
         // Trigger the Python backend worker
         const pythonBackendUrl = `${WORKER_URL}/api/project/source/link/${newSource._id}`; // Replace with your actual Python backend URL
-        axios.post(pythonBackendUrl, { link: tag });
+        await axios.post(pythonBackendUrl, { link: tag });
 
         return res.status(200).json(newSource);
     } catch (error) {
@@ -206,7 +206,7 @@ app.delete("/api/project/source/link/:id", authMiddleware, async (req, res) => {
         return res.sendStatus(200);
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: error });
     }
 });
 
@@ -278,7 +278,7 @@ app.put("/api/project/source/text/:id", authMiddleware, async (req, res) => {
 // });
 
 app.use(errorHandler);
-
+const PORT = 3001
 // app.listen(PORT, () => {
 //     console.log(`Server started, Listening to PORT: ${PORT}`);
 // });

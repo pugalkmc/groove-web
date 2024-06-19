@@ -16,9 +16,18 @@ async function deleteWithTag(tag, manager, index) {
             var ids = [];
             for (var index=1; index<=chunkLength; index++){
                 ids.push(`${tag}_${index}`)
+                if (ids.length === 1000){
+                    await ns.deleteMany(ids);
+                    ids = [];
+                }
+
             }
-            await ns.deleteMany(ids);
-            console.log(`Deleted ${ids.length} documents with tag '${tag}'.`);
+
+            if (ids.length > 0){
+                await ns.deleteMany(ids);
+            }
+            
+            console.log(`Deleted ${chunkLength} documents with tag '${tag}'.`);
             return true
         } else {
             console.log(`No documents found with tag '${tag}'.`);
