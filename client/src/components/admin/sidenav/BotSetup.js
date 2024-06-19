@@ -29,7 +29,7 @@ const BotSetup = () => {
     };
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(`/register ${botDetails.registerId}`)
+        navigator.clipboard.writeText(`${botDetails.groupId ? '/unregister' : '/register'} ${botDetails.registerId}`)
             .then(() => {
                 setCopySuccess('Copied!');
                 setTimeout(() => setCopySuccess(''), 2000); // Clear the success message after 2 seconds

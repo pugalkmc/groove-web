@@ -10,7 +10,7 @@ const index = pc.index("common")
 async function deleteWithTag(tag, manager, index) {
     try {
         const ns = index.namespace(manager)
-        const data = await  Source.findOne({ _id: tag }, {chunkLength: 1 });
+        const data = await  Source.findOne({ _id: new mongoose.Types.ObjectId(tag) }, {chunkLength: 1 });
         const chunkLength = data.chunkLength;
         if (chunkLength > 0) {
             var ids = [];
@@ -22,6 +22,7 @@ async function deleteWithTag(tag, manager, index) {
             return true
         } else {
             console.log(`No documents found with tag '${tag}'.`);
+            return false
         }
     } catch (error) {
         console.error(`An error occurred: ${error.message}`);

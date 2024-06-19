@@ -1,7 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { PORT } from "./config.js";
+import { WORKER_URL } from "./config.js";
 import mongodbConnect from "./database/db.js";
 import Project from "./database/models/project.js";
 import User from "./database/models/user.js";
@@ -151,7 +151,7 @@ app.post('/api/project/controls', async (req, res) => {
 app.get("/api/project/source", authMiddleware, async (req, res) => {
     const { _id } = req.user;
     try {
-        const sources = await Source.find({ manager: _id }, { "tag": 1, "values.0": 1, type: 1 });
+        const sources = await Source.find({ manager: new mongoose.Types.ObjectId(_id) }, { "tag": 1, "values.0": 1, type: 1 });
         return res.status(200).json(sources);
     } catch (error) {
         console.error(error);
@@ -167,7 +167,7 @@ app.post("/api/project/source/link", authMiddleware, async (req, res) => {
     try {
         // Create and save new source
         const newSource = new Source({
-            manager: _id,
+            manager: new mongoose.Types.ObjectId(_id),
             type: 'link',
             tag,
             values: [],
@@ -177,7 +177,7 @@ app.post("/api/project/source/link", authMiddleware, async (req, res) => {
         await newSource.save();
 
         // Trigger the Python backend worker
-        const pythonBackendUrl = `http://localhost:5000/api/project/source/link/${newSource._id}`; // Replace with your actual Python backend URL
+        const pythonBackendUrl = `${WORKER_URL}/api/project/source/link/${newSource._id}`; // Replace with your actual Python backend URL
         axios.post(pythonBackendUrl, { link: tag });
 
         return res.status(200).json(newSource);
@@ -193,8 +193,8 @@ app.delete("/api/project/source/link/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
 
     try {
-        const sources = await Source.findOne({ _id : id }, { isScraped : 1 });
-        if ( sources.isScraped ){
+        const sources = await Source.findOne({ _id : new mongoose.Types.ObjectId(id) }, { isScraped : 1 , isStoredAtVectorDb: 1 });
+        if ( sources.isScraped && !sources.isStoredAtVectorDb ){
             return res.status(500).json({ error: "Can't delete now, this source is added just now" });
         }
         const status = await deleteWithTag(id, manager, index);
@@ -202,7 +202,7 @@ app.delete("/api/project/source/link/:id", authMiddleware, async (req, res) => {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
 
-        await Source.findOneAndDelete({ _id: id, type: 'link' });
+        await Source.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id), type: 'link' });
         return res.sendStatus(200);
     } catch (error) {
         console.error(error);
@@ -217,7 +217,7 @@ app.post("/api/project/source/text", authMiddleware, async (req, res) => {
 
     try {
         const newSource = new Source({
-            manager: _id,
+            manager: new mongoose.Types.ObjectId(_id),
             type: 'text',
             tag,
             values: [value],
@@ -238,7 +238,7 @@ app.delete("/api/project/source/text/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
 
     try {
-        await Source.findOneAndDelete({ _id: id, manager: _id, type: 'text' });
+        await Source.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id), manager: new mongoose.Types.ObjectId(_id), type: 'text' });
         return res.sendStatus(200);
     } catch (error) {
         console.error(error);
@@ -254,7 +254,7 @@ app.put("/api/project/source/text/:id", authMiddleware, async (req, res) => {
 
     try {
         await Source.findOneAndUpdate(
-            { _id: id, manager: _id, type: 'text' },
+            { _id: new mongoose.Types.ObjectId( id ), manager: new mongoose.Types.ObjectId(_id), type: 'text' },
             { $set: { 'values.0.text': value, updatedAt: new Date() } }
         );
         return res.sendStatus(200);
@@ -279,9 +279,9 @@ app.put("/api/project/source/text/:id", authMiddleware, async (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log(`Server started, Listening to PORT: ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server started, Listening to PORT: ${PORT}`);
+// });
 
 
-// export default app;
+export default app;
