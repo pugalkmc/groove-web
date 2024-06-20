@@ -40,10 +40,10 @@ const BotSetup = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <h2 className="text-center">Bot Setup</h2>
+        <div className='console-page'>
+            <div className="container p-lg-5 p-md-3 p-1">
             {botDetails ? (
-                <div className="card bg-light p-4">
+                <div className="card bg-light p-lg-4 p-md-3 p-2">
                     <div className="card-body">
                         <div className="step mb-4">
                             <h2 className="border-bottom pb-2">Step 1</h2>
@@ -66,15 +66,15 @@ const BotSetup = () => {
                                     <p>Provide required permissions as shown below</p>
                                     <p>Input the command into your group to set up the bot</p>
                                     <div className='row'>
-                                        <img src={instruction_1_img} alt="Instruction" className="col-6 instruction-img" />
-                                        <img src={instruction_2_img} alt="Instruction" className="col-6 instruction-img" />
+                                        <img src={instruction_1_img} alt="Instruction" className="col-lg-3 col-md-4 col-5 instruction-img" />
+                                        <img src={instruction_2_img} alt="Instruction" className="col-lg-3 col-md-4 col-5 instruction-img" />
                                     </div>
                                 </div>
                             )}
                         </div>
                         <div className="step mb-4">
                             <h2 className="border-bottom pb-2">Step 3</h2>
-                            <p>Copy the register commands and enter them in your Telegram and Discord group.</p>
+                            <p>Copy the register command and enter in your Telegram group</p>
                             <div className="command bg-light p-3 rounded mb-3">
                                 {botDetails.groupId ? (
                                     <p>Currently linked to Telegram Group ID: <code>{botDetails.groupId}</code></p>
@@ -97,6 +97,7 @@ const BotSetup = () => {
             ) : (
                 <p className="text-center mt-5">Loading bot details...</p>
             )}
+        </div>
         </div>
     );
 };

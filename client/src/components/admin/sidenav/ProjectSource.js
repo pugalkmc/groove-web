@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../config";
-import { v4 as uuidv4 } from "uuid";
+import FileUpload from "./FileUpload";
+import PopInfo from "../../super/PopInfo";
 
 const ProjectSource = () => {
   const [sources, setSources] = useState([]);
@@ -9,6 +10,14 @@ const ProjectSource = () => {
   const [newText, setNewText] = useState("");
   const [editTextId, setEditTextId] = useState(null);
   const [editTextValue, setEditTextValue] = useState("");
+  const [ modelData, setModelData ] = useState({
+    title:'',
+    description: ''
+  })
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleCloseModal = () => setShowModal(!showModal);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,9 +70,17 @@ const ProjectSource = () => {
         }
     } catch (error) {
         if (error.response && error.response.data && error.response.data.error) {
-            alert(error.response.data.error);
+            setModelData({
+              title: 'Error',
+              description: error.response.data.error
+            })
+            handleCloseModal()
         } else {
-            alert('An unexpected error occurred.');
+          setModelData({
+            title: 'Error',
+            description: 'An unexpected error occurred.'
+          })
+          handleCloseModal()
         }
     }
 };
@@ -87,9 +104,11 @@ const ProjectSource = () => {
   };
 
   return (
-    <div className="container pt-4">
+    <div className="container mt-4">
+      <PopInfo title={modelData.title} description={modelData.description} showModal={showModal} handleCloseModal={handleCloseModal}/>
       <h2 className="text-center pb-4">Source</h2>
-      <div className="pb-4">
+      <FileUpload/>
+      <div className="p-4 card">
         <label htmlFor="links" className="form-label text-xl">
           Add Source Links
         </label>
@@ -127,7 +146,7 @@ const ProjectSource = () => {
         </ul>
         {sources.filter(source => source.type === 'link').length === 0 && <p>No links found or error while fetching.</p>}
       </div>
-      <div className="pb-4">
+      <div className="p-4 card mt-3">
         <form onSubmit={handleAddText}>
           <div className="pb-3">
             <p className="text-xl font-bold">Add Manual sources</p>
@@ -197,8 +216,8 @@ const ProjectSource = () => {
             </li>
           ))}
         </ul>
+        {sources.filter(source => source.type === 'text').length === 0 && <p>No texts found or error while fetching.</p>}
       </div>
-      {sources.filter(source => source.type === 'text').length === 0 && <p>No texts found or error while fetching.</p>}
     </div>
   );
 };

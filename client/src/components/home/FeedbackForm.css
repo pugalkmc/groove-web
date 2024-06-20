@@ -1,0 +1,50 @@
+/* FeedbackForm.css */
+
+.container {
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .card {
+    border-radius: 10px;
+    border: none;
+  }
+  
+  .card-header {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 1rem;
+  }
+  
+  .card-body {
+    padding: 2rem;
+  }
+  
+  .form-label {
+    font-weight: bold;
+  }
+  
+  .form-control, .form-select, .btn {
+    border-radius: 5px;
+  }
+  
+  .btn {
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #7aa8da;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 5px rgba(94, 140, 189, 0.5);
+  }
+  
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1rem;
+    }
+  }
+  

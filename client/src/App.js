@@ -13,25 +13,24 @@ import FAQ from "./components/admin/sidenav/FAQ";
 import FaqForm from "./components/super/FaqForm";
 import PrivateRoute from "./PrivateRoute";
 import BotSetup from "./components/admin/sidenav/BotSetup";
-// import Chart from "./components/Chart";
+import FeedbackForm from "./components/home/FeedbackForm";
 
 function App() {
   return (
     <BrowserRouter>
-    {/* <Chart/> */}
       <Routes>
         <Route path="/console" element={<PrivateRoute/>}>
           <Route path="" element={<AdminConsole/>}>
             <Route path="project" element={<ProjectDetails/>}/>
-            <Route path="setup" element={<BotSetup/>}/>
             <Route path="source" element={<ProjectSource/>}/>
             <Route path="control" element={<BotControls/>}/>
             <Route path="expert" element={<ExpertHelp/>}/>
           </Route>
           <Route path="account" element={<AccountDashboard/>}/>
-          <Route path="FAQ" element={<FAQ/>}/>
+          <Route path="setup" element={<BotSetup/>}/>
           <Route path="*" element={<AdminConsole/>}/>
         </Route>
+        <Route path="feedback" element={<FeedbackForm/>}/>
         <Route path="/faq-form" element={<FaqForm/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/login" element={<Login/>}/>

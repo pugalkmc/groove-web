@@ -35,6 +35,7 @@ async function deleteWithTag(tag, manager, index) {
         }
     } catch (error) {
         console.error(`An error occurred: ${error.message}`);
+        return false
     }
 }
 

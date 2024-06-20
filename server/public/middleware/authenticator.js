@@ -34,11 +34,14 @@ import { JWT_SECRET } from '../../config.js';
 
   
       // Generate a JWT token
-      const token = jwt.sign({...req.body, _id: user._id}, JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({...req.body, _id: user._id}, JWT_SECRET, { expiresIn: '1d' });
 
-      req.body = { ...req.body, _id: user._id , token}
+      req.body = { token}
   
-      // Return the token
+      // res.cookie('token', token, {
+      //   httpOnly: true,
+      //   secure: true
+      // });
       res.status(200).json(req.body);
     } catch (err) {
       console.error('Error logging in:', err);

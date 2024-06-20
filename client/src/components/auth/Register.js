@@ -7,9 +7,11 @@ const Register = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
+
   useEffect(() => {
     const validate = async () => {
-      if (localStorage.getItem("token")) {
+      const token = localStorage.getItem('token');
+      if (token) {
         navigate('/console');
       }
     };

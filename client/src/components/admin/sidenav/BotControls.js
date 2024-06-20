@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './BotControls.css';
 import './styles.css'
 import axiosInstance from '../../../config';
+
 
 const BotControls = () => {
   const [settings, setSettings] = useState({
@@ -59,7 +59,7 @@ const BotControls = () => {
       <h2 className='text-center'>Controls</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="card p-lg-5 p-md-3 p-3">
         <div className="form-group form-switch mt-3">
           <label htmlFor="status" className="mr-3 form-label bot-control-label" style={{ fontSize: 20 }}>
             Bot Status

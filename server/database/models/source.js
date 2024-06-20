@@ -8,7 +8,7 @@ const sourceSchema = new Schema({
     },
     type: {
         type: String,
-        enum: ['link', 'text'],
+        enum: ['link', 'text','file'],
         required: true
     },
     tag: {

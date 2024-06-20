@@ -1,50 +1,83 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { WORKER_URL } from "./config.js";
 import mongodbConnect from "./database/db.js";
-import Project from "./database/models/project.js";
-import User from "./database/models/user.js";
-import Source from "./database/models/source.js";
 import { authMiddleware, attachUserToRequest, errorHandler } from "./public/middleware/auth.js";
 import { login, register } from "./public/middleware/authenticator.js";
-import mongoose from "mongoose";
-import axios from "axios";
-import { deleteWithTag, index } from "./database/pinecone_config.js";
 
-// const func = async () => {
-//     await deleteWithTag('6671081f0e12d03eda58f738')
-// }
+import cookieParser from "cookie-parser";
+import responseTime from "response-time";
 
-// func()
+// importing routers
+import feedbackRoutes from './routes/feedbacks.js'
+import profileRoutes from './routes/profile.js'
+import projectRoutes from './routes/project.js'
+
+mongodbConnect();
 
 const app = express();
 
-mongodbConnect();
+
 app.use(express.json());
-app.use(morgan());
+app.use(responseTime((req, res, time) => {
+    res.responseTime = time.toFixed(2);
+}));
+
+// Custom Morgan format with response time
+morgan.token('response-time', (req, res) => `${res.responseTime}ms`);
+morgan.token('method', (req) => req.method);
+morgan.token('url', (req) => req.url);
+morgan.token('status', (req, res) => res.statusCode);
+
+// Custom logging middleware to filter out OPTIONS requests
+const customMorgan = (req, res, next) => {
+    if (req.method !== 'OPTIONS') {
+        morgan(':method :url :status - :response-time')(req, res, next);
+    } else {
+        next();
+    }
+};
+
+app.use(customMorgan);
+app.use(cookieParser())
+
 
 const allowedOrigins = ['http://localhost:3000', 'https://groove-ai-web.vercel.app'];
 
 const corsOptions = {
-    origin: '*',
-    methods: '*',
-    allowedHeaders: '*',
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow any methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+    credentials: true, // Allow sending cookies across origins
 };
 
-app.use(cors({
-    origin: allowedOrigins,
-    methods: '*',
-    allowedHeaders: '*',
-}));
+app.use(cors(corsOptions));
+// Explicitly handle preflight requests
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.sendStatus(204);
+});
 
 // Register endpoint
 app.post('/api/register', register);
 app.post('/api/login', login);
+app.use('/api/feedback', feedbackRoutes);
 
 app.use(authMiddleware);
 app.use(attachUserToRequest);
 app.use(errorHandler);
+
+app.use('/api/profile', profileRoutes)
+app.use('/api/project', projectRoutes)
 
 app.post('/api/auth', (req, res) => {
     return res.status(200).json({ message: 'Json web token is valid' })
@@ -53,229 +86,6 @@ app.post('/api/auth', (req, res) => {
 app.get("/healthcheck", (req, res) => {
     return res.json({ status: "success" });
 });
-
-
-app.get("/api/profile", async (req, res) => {
-    const { _id } = req.user;
-    await User.findById({ _id: new mongoose.Types.ObjectId(_id) }, { name: 1, email: 1, _id: 0 })
-        .then(response => {
-            if (response) {
-                return res.status(200).json(response);
-            }
-            return res.sendStatus(401);
-        })
-        .catch(err => {
-            console.log(err);
-            return res.sendStatus(500);
-        })
-})
-
-
-app.post("/api/profile", async (req, res) => {
-    const { _id } = req.user;
-    const { name, email } = req.body;
-    await User.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(_id) }, { $set: { name, email } })
-        .then(response => {
-            return res.sendStatus(200);
-        })
-        .catch(err => {
-            console.log(err);
-            return res.sendStatus(500);
-        })
-})
-
-
-app.get("/api/project/details", async (req, res) => {
-    const { _id } = req.user;
-    // console.log(req.user)
-    const response = await Project.findOne({ manager: new mongoose.Types.ObjectId(_id) }, { name: 1, email: 1, source: 1, _id: 0 });
-    // console.log(response)
-    return res.json(response);
-})
-
-app.post("/api/project/details", async (req, res) => {
-    const { _id } = req.user;
-    const { name, email } = req.body;
-    await Project.findOneAndUpdate({ manager: new mongoose.Types.ObjectId(_id) }, { $set: { name, email } })
-        .then(response => {
-            return res.sendStatus(200);
-        })
-        .catch(err => {
-            console.log(err);
-            return res.sendStatus(500);
-        })
-})
-
-
-
-
-app.get('/api/project/controls', async (req, res) => {
-    const { _id } = req.user;
-    await Project.findOne({ manager: new mongoose.Types.ObjectId(_id) }, { controls: 1, _id: 0 })
-        .then(response => {
-            return res.status(200).json(response);
-        })
-        .catch(err => {
-            console.log(err);
-            return res.sendStatus(500);
-        })
-})
-
-
-app.get('/api/project/setup', async (req, res) => {
-    const { _id } = req.user;
-    await Project.findOne({ manager: new mongoose.Types.ObjectId(_id) }, { controls: 0, _id: 0 })
-        .then(response => {
-            return res.status(200).json(response);
-        })
-        .catch(err => {
-            console.log(err);
-            return res.sendStatus(500);
-        })
-})
-
-
-app.post('/api/project/controls', async (req, res) => {
-    const { _id } = req.user;
-    await Project.findOneAndUpdate({ manager: new mongoose.Types.ObjectId(_id) }, { $set: { controls: req.body } })
-        .then(response => {
-            return res.sendStatus(200);
-        })
-        .catch(err => {
-            console.log(err);
-            return res.sendStatus(500);
-        })
-})
-
-// API route to get all sources for the logged-in user
-app.get("/api/project/source", authMiddleware, async (req, res) => {
-    const { _id } = req.user;
-    try {
-        const sources = await Source.find({ manager: new mongoose.Types.ObjectId(_id) }, { "tag": 1, "values.0": 1, type: 1 });
-        return res.status(200).json(sources);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// API route to add new link and trigger Python backend
-app.post("/api/project/source/link", authMiddleware, async (req, res) => {
-    const { _id } = req.user;
-    const { tag, value } = req.body;
-
-    try {
-        // Create and save new source
-        const newSource = new Source({
-            manager: new mongoose.Types.ObjectId(_id),
-            type: 'link',
-            tag,
-            values: [],
-            isScraped: false,
-            isStoredAtVectorDb: false,
-        });
-        await newSource.save();
-
-        // Trigger the Python backend worker
-        const pythonBackendUrl = `${WORKER_URL}/api/project/source/link/${newSource._id}`; // Replace with your actual Python backend URL
-        await axios.post(pythonBackendUrl, { link: tag });
-
-        return res.status(200).json(newSource);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// API route to delete a link source
-app.delete("/api/project/source/link/:id", authMiddleware, async (req, res) => {
-    const { _id: manager } = req.user;
-    const { id } = req.params;
-
-    try {
-        const sources = await Source.findOne({ _id : new mongoose.Types.ObjectId(id) }, { isScraped : 1 , isStoredAtVectorDb: 1 });
-        if ( sources.isScraped && !sources.isStoredAtVectorDb ){
-            return res.status(500).json({ error: "Can't delete now, this source is added just now" });
-        }
-        const status = await deleteWithTag(id, manager, index);
-        if (!status){
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
-
-        await Source.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id), type: 'link' });
-        return res.sendStatus(200);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: error });
-    }
-});
-
-// API route to add a text source
-app.post("/api/project/source/text", authMiddleware, async (req, res) => {
-    const { _id } = req.user;
-    const { tag, value } = req.body;
-
-    try {
-        const newSource = new Source({
-            manager: new mongoose.Types.ObjectId(_id),
-            type: 'text',
-            tag,
-            values: [value],
-            isScraped: false,
-            isStoredAtVectorDb: false,
-        });
-        await newSource.save();
-        return res.status(200).json(newSource);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// API route to delete a text source
-app.delete("/api/project/source/text/:id", authMiddleware, async (req, res) => {
-    const { _id } = req.user;
-    const { id } = req.params;
-
-    try {
-        await Source.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id), manager: new mongoose.Types.ObjectId(_id), type: 'text' });
-        return res.sendStatus(200);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// API route to update a text source
-app.put("/api/project/source/text/:id", authMiddleware, async (req, res) => {
-    const { _id } = req.user;
-    const { id } = req.params;
-    const { value } = req.body;
-
-    try {
-        await Source.findOneAndUpdate(
-            { _id: new mongoose.Types.ObjectId( id ), manager: new mongoose.Types.ObjectId(_id), type: 'text' },
-            { $set: { 'values.0.text': value, updatedAt: new Date() } }
-        );
-        return res.sendStatus(200);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// Plan Routes
-// app.post('/controls', async (req, res) => {
-//     try {
-//         const { name, price } = req.body;
-//         const plan = new Project({ name, price });
-//         await plan.save();
-//         res.status(201).json(plan);
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send('Server Error');
-//     }
-// });
 
 app.use(errorHandler);
 const PORT = 3001

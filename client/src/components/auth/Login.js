@@ -2,7 +2,6 @@ import "./styles.css";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../config";
 import { useEffect, useState } from "react";
-// import Cookies from "js-cookie";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,7 +9,8 @@ const Login = () => {
 
   useEffect(() => {
     const validate = async () => {
-      if (localStorage.getItem("token")) {
+      const token = localStorage.getItem('token');
+      if (token) {
         navigate('/console');
       }
     };
@@ -32,15 +32,10 @@ const Login = () => {
 
       // Check the status code
       if (response.status === 200) {
-        const data = response.data
-        Object.keys(data).forEach(key => {
-          const value = data[key];
-          localStorage.setItem(key, value);
-        })
-        navigate("/console");
+        localStorage.setItem('token', response.data.token)
+        navigate('/console');
       } else {
         setError(response.data.error);
-        // Handle other status codes if needed
       }
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {

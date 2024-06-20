@@ -6,7 +6,6 @@ function AdminNavbar() {
   const navigate = useNavigate();
 
   useEffect(()=>{
-    console.log(location)
     if (location.pathname === '/console'){
       navigate('/console/project');
     }
@@ -56,8 +55,8 @@ function AdminNavbar() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link w-100 h-100" to={"/console/faq"}>
-                FAQ
+              <Link className="nav-link w-100 h-100" to={"/console/setup"}>
+                Setup Guide
               </Link>
             </li>
           </ul>

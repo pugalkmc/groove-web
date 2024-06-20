@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import '../ConsolePage.css';
 import axiosInstance from '../../../config';
+import PopInfo from '../../super/PopInfo';
 
 function AccountDashboard() {
   const [user, setUser] = useState({
@@ -11,6 +11,10 @@ function AccountDashboard() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "" });
+  const [ modelData, setModelData ] = useState({
+    title:'',
+    description: ''
+  })
 
   useEffect(() => {
     // Fetch user data from the server
@@ -29,12 +33,25 @@ function AccountDashboard() {
     fetchData();
   }, []);
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleCloseModal = () => setShowModal(!showModal);
+
   const handleChangePassword = () => {
-    alert("Change Password option will be available soon.");
+    setModelData({
+      title: 'Hello',
+      description: "Change Password option will be available soon."
+    })
+    handleCloseModal()
   };
 
   const handleAddPaymentDetails = () => {
-    alert("Add Payment Details option will be available soon.");
+    setModelData({
+      title: 'Hello',
+      description: "Add Payment Details option will be available soon."
+    })
+    handleCloseModal()
+
   };
 
   const handleEditToggle = () => {
@@ -61,6 +78,7 @@ function AccountDashboard() {
 
   return (
     <div className='console-page'>
+      <PopInfo title={modelData.title} description={modelData.description} showModal={showModal} handleCloseModal={handleCloseModal}/>
       <div className="container pt-5">
         <h2>Account Dashboard</h2>
         <div className='d-flex justify-content-end'>
