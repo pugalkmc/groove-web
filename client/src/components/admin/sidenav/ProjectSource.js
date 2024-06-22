@@ -146,7 +146,7 @@ const ProjectSource = () => {
         </ul>
         {sources.filter(source => source.type === 'link').length === 0 && <p>No links found or error while fetching.</p>}
       </div>
-      <div className="p-4 card mt-3">
+      {/* <div className="p-4 card mt-3">
         <form onSubmit={handleAddText}>
           <div className="pb-3">
             <p className="text-xl font-bold">Add Manual sources</p>
@@ -217,7 +217,7 @@ const ProjectSource = () => {
           ))}
         </ul>
         {sources.filter(source => source.type === 'text').length === 0 && <p>No texts found or error while fetching.</p>}
-      </div>
+      </div> */}
     </div>
   );
 };

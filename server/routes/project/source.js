@@ -2,6 +2,7 @@ import express from 'express'
 import multer from "multer";
 import path from "path";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { deleteWithTag, index } from "../../database/pinecone_config.js"
 import mongoose from "mongoose";
 import axios from "axios";
@@ -29,7 +30,7 @@ router.post('/file', upload.single('file'), async (req, res) => {
 
         // Example: Process file or save it with a dynamic name like temp_${_id}.pdf
         const _id = req.user._id; // Assuming _id is sent from the frontend
-        const fileName = `temp_${_id}.pdf`;
+        const fileName = `${req.file.originalname}`;
 
         // Optionally, save the file to disk if needed
         const filePath = path.join(__dirname, 'uploads', fileName);
@@ -45,20 +46,92 @@ router.post('/file', upload.single('file'), async (req, res) => {
             type: 'file',
             tag: fileName,
             values: formatted,
-            isScraped: false,
+            isScraped: true,
             isStoredAtVectorDb: false,
         });
         await newSource.save();
 
         // Trigger the Python backend worker
-        // const pythonBackendUrl = `${WORKER_URL}/source/text/${newSource._id}`; // Replace with your actual Python backend URL
-        // axios.post(pythonBackendUrl, { link: tag });
+        const pythonBackendUrl = `${WORKER_URL}/api/project/source/file/${newSource._id}`;
+        axios.post(pythonBackendUrl, { tag: fileName });
 
         res.status(200).send('File uploaded successfully.');
 
     } catch (error) {
         console.error('Error uploading file:', error);
         res.status(500).send('Failed to upload file.');
+    }
+});
+
+
+// router.post('/text', async (req, res) => {
+//     try {
+//         const { _id } = req.user;
+//         const { tag, value } = req.body;
+
+//         const splitter = new RecursiveCharacterTextSplitter({
+//             chunkSize: 1000,
+//             chunkOverlap: 100,
+//           });
+          
+//         const docs = await splitter.createDocuments([text]);
+//         const formatted = docs.map(doc => doc.pageContent)
+//         // Create and save new source
+//         const newSource = new Source({
+//             manager: new mongoose.Types.ObjectId(_id),
+//             type: 'text',
+//             tag: tag,
+//             values: formatted,
+//             isScraped: true,
+//             isStoredAtVectorDb: false,
+//         });
+//         await newSource.save();
+
+//         // Trigger the Python backend worker
+//         const pythonBackendUrl = `${WORKER_URL}/api/project/source/text/${newSource._id}`;
+//         axios.post(pythonBackendUrl, { tag: fileName });
+
+//         res.status(200).send('File uploaded successfully.');
+
+//     } catch (error) {
+//         console.error('Error uploading file:', error);
+//         res.status(500).send('Failed to upload file.');
+//     }
+// });
+
+
+router.get("/file", async (req, res)=> {
+    const { _id } = req.user;
+    try {
+        const sources = await Source.find({ manager: new mongoose.Types.ObjectId(_id), type: 'file' }, { "tag": 1 });
+        return res.status(200).json(sources);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+
+// API route to delete a link source
+router.delete("/file/:id", async (req, res) => {
+    const { _id: manager } = req.user;
+    const { id } = req.params;
+
+    try {
+        const sources = await Source.findOne({ _id: new mongoose.Types.ObjectId(id) }, { isScraped: 1, isStoredAtVectorDb: 1 });
+        if ( sources && !sources.isStoredAtVectorDb) {
+            return res.status(500).json({ error: "Can't delete now, this source is under progress, please come later and remove if needed" });
+        }
+        const status = await deleteWithTag(id, manager, index);
+        if (!status) {
+            return res.status(500).json({ error: "Can't delete now, this source is under progress, please come later and remove if needed" });
+        }
+
+        await Source.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id), type: 'file' });
+        return res.sendStatus(200);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error });
     }
 });
 

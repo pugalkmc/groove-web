@@ -1,9 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../../../config';
+import FileList from './FileList';
 
 const FileUpload = () => {
+    const [files, setFiles] = useState([]);
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState('');
+    const fileInputRef = useRef(null); // Ref to access the file input element
+
+    useEffect(() => {
+        fetchFiles();
+    }, []);
+
+    const fetchFiles = async () => {
+        try {
+            const response = await axiosInstance.get("/api/project/source/file");
+            setFiles(response.data);
+        } catch (error) {
+            console.error("Error fetching files:", error);
+            setFiles([]);
+        }
+    };
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -25,19 +42,33 @@ const FileUpload = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setTimeout(()=> {
-                setMessage('')
-            }, 5000)
 
             if (response.status === 200) {
+                fetchFiles(); // Refresh file list after successful upload
+                setFile(null);
                 setMessage('File uploaded successfully!');
+                resetFileInput(); // Reset file input after successful upload
             } else {
                 setMessage('Failed to upload file.');
             }
         } catch (error) {
             console.error('Error uploading file:', error);
             setMessage('Error uploading file.');
+        } finally {
+            // Clear message after 5 seconds
+            setTimeout(() => {
+                setMessage('');
+            }, 5000);
+        }
+    };
 
+    const refreshList = ()=>{
+        fetchFiles()
+    }
+
+    const resetFileInput = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''; // Resetting the value of file input
         }
     };
 
@@ -53,7 +84,8 @@ const FileUpload = () => {
                                 className="form-control"
                                 accept="application/pdf"
                                 onChange={handleFileChange}
-                                style={{height: 50}}
+                                ref={fileInputRef} // Assigning the ref to the file input
+                                style={{ height: 50 }}
                             />
                         </div>
                         <div className="mb-3">
@@ -68,6 +100,7 @@ const FileUpload = () => {
                         </div>
                     )}
                 </div>
+                <FileList files={files} refreshList={refreshList} />
             </div>
         </div>
     );
