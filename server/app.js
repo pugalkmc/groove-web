@@ -89,9 +89,9 @@ app.get("/healthcheck", (req, res) => {
 
 app.use(errorHandler);
 const PORT = 3001
-app.listen(PORT, () => {
-    console.log(`Server started, Listening to PORT: ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server started, Listening to PORT: ${PORT}`);
+// });
 
 
-// export default app;
+export default app;
