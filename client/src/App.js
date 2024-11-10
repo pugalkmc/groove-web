@@ -14,6 +14,7 @@ import FaqForm from "./components/super/FaqForm";
 import PrivateRoute from "./PrivateRoute";
 import BotSetup from "./components/admin/sidenav/BotSetup";
 import FeedbackForm from "./components/home/FeedbackForm";
+import ChatBotPlayground from "./components/admin/sidenav/ChatBotPlayground";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="source" element={<ProjectSource/>}/>
             <Route path="control" element={<BotControls/>}/>
             <Route path="expert" element={<ExpertHelp/>}/>
+            <Route path="playground" element={<ChatBotPlayground/>} />
           </Route>
           <Route path="account" element={<AccountDashboard/>}/>
           <Route path="setup" element={<BotSetup/>}/>

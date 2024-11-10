@@ -71,6 +71,23 @@ const AdminConsole = () => {
             </div>
             <div className="option-item-container">
               <Link
+                to="/console/playground"
+                className={`option-item ${
+                  location.pathname === "/console/playground" ? "nav-active" : ""
+                }`}
+              >
+                <p>Playground</p>
+                <div
+                  className={`active-stick ${
+                    location.pathname === "/console/playground"
+                      ? "nav-active-stick"
+                      : ""
+                  }`}
+                ></div>
+              </Link>
+            </div>
+            <div className="option-item-container">
+              <Link
                 to="/console/expert"
                 className={`option-item ${
                   location.pathname === "/console/expert" ? "nav-active" : ""

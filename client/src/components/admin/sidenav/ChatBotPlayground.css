@@ -1,0 +1,110 @@
+/* Main container styling */
+.chatbot-container {
+    width: 90%;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header text styling */
+  .text-center {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  /* Chat display area styling */
+  .chat-display {
+    height: 400px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Chat message styling */
+  .chat-message {
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 6px;
+    max-width: 75%;
+    font-size: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+  
+  /* User message styling */
+  .chat-message.user {
+    align-self: flex-end;
+    background-color: #daf8e3;
+    color: #333;
+  }
+  
+  /* Bot message styling */
+  .chat-message.bot {
+    align-self: flex-start;
+    background-color: #f0f0f0;
+    color: #555;
+  }
+  
+  /* Loading "thinking" placeholder styling */
+  .chat-message.thinking {
+    font-style: italic;
+    color: #888;
+  }
+  
+  /* Chat input container */
+  .chat-input-container {
+    display: flex;
+    margin-top: 10px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 10px;
+  }
+  
+  /* Input field styling */
+  .chat-input {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 8px 0 0 8px;
+    outline: none;
+  }
+  
+  /* Send button styling */
+  .btn-submit {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-submit:disabled {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+  }
+  
+  .btn-submit:hover:not(:disabled) {
+    background-color: #45a049;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .chatbot-container {
+      width: 100%;
+      padding: 10px;
+    }
+  }
+  
