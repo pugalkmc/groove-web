@@ -10,8 +10,8 @@ const ProjectSource = () => {
   const [newText, setNewText] = useState("");
   const [editTextId, setEditTextId] = useState(null);
   const [editTextValue, setEditTextValue] = useState("");
-  const [ modelData, setModelData ] = useState({
-    title:'',
+  const [modelData, setModelData] = useState({
+    title: '',
     description: ''
   })
 
@@ -63,27 +63,27 @@ const ProjectSource = () => {
 
   const handleDeleteSource = async (id, type) => {
     try {
-        const response = await axiosInstance.delete(`/api/project/source/${type}/${id}`);
+      const response = await axiosInstance.delete(`/api/project/source/${type}/${id}`);
 
-        if (response.status === 200) {
-            setSources(sources.filter(source => source._id !== id));
-        }
+      if (response.status === 200) {
+        setSources(sources.filter(source => source._id !== id));
+      }
     } catch (error) {
-        if (error.response && error.response.data && error.response.data.error) {
-            setModelData({
-              title: 'Error',
-              description: error.response.data.error
-            })
-            handleCloseModal()
-        } else {
-          setModelData({
-            title: 'Error',
-            description: 'An unexpected error occurred.'
-          })
-          handleCloseModal()
-        }
+      if (error.response && error.response.data && error.response.data.error) {
+        setModelData({
+          title: 'Error',
+          description: error.response.data.error
+        })
+        handleCloseModal()
+      } else {
+        setModelData({
+          title: 'Error',
+          description: 'An unexpected error occurred.'
+        })
+        handleCloseModal()
+      }
     }
-};
+  };
 
   const handleEditText = (id, value) => {
     setEditTextId(id);
@@ -93,7 +93,7 @@ const ProjectSource = () => {
   const handleSaveText = async (id) => {
     try {
       await axiosInstance.put(`/api/project/source/text/${id}`, { value: editTextValue });
-      setSources(sources.map(source => 
+      setSources(sources.map(source =>
         source._id === id ? { ...source, values: [{ text: editTextValue }], updatedAt: new Date() } : source
       ));
       setEditTextId(null);
@@ -105,9 +105,9 @@ const ProjectSource = () => {
 
   return (
     <div className="container mt-4">
-      <PopInfo title={modelData.title} description={modelData.description} showModal={showModal} handleCloseModal={handleCloseModal}/>
+      <PopInfo title={modelData.title} description={modelData.description} showModal={showModal} handleCloseModal={handleCloseModal} />
       <h2 className="text-center pb-4">Source</h2>
-      <FileUpload/>
+      <FileUpload />
       <div className="p-4 card">
         <label htmlFor="links" className="form-label text-xl">
           Add Source Links
@@ -133,14 +133,21 @@ const ProjectSource = () => {
               <div style={{ maxWidth: "75%", whiteSpace: "normal", overflowWrap: "break-word", wordBreak: "break-all" }}>
                 <p>{link.tag}</p>
               </div>
-              <button
-                className="btn btn-sm btn-outline-secondary ml-2"
-                type="button"
-                onClick={() => handleDeleteSource(link._id, 'link')}
-                style={{ maxHeight: "35px" }}
-              >
-                Delete
-              </button>
+              {
+                
+                link.isStoredAtVectorDb ? (
+                  <button
+                    className="btn btn-sm btn-outline-secondary ml-2"
+                    type="button"
+                    onClick={() => handleDeleteSource(link._id, 'link')}
+                    style={{ maxHeight: "35px" }}
+                  >
+                    Delete
+                  </button>
+                ) : (
+                  <p className="text-success">Learning in progress</p>
+                )
+              }
             </li>
           ))}
         </ul>

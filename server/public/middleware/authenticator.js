@@ -1,5 +1,5 @@
   import User from '../../database/models/user.js'
-  import bcrypt from 'bcrypt'
+  import bcrypt from 'bcrypt';
   import jwt from "jsonwebtoken";
 import Project from '../../database/models/project.js';
 import { JWT_SECRET } from '../../config.js';
@@ -36,7 +36,7 @@ import { JWT_SECRET } from '../../config.js';
       // Generate a JWT token
       const token = jwt.sign({...req.body, _id: user._id}, JWT_SECRET, { expiresIn: '1d' });
 
-      req.body = { token}
+      req.body = { token};
   
       // res.cookie('token', token, {
       //   httpOnly: true,

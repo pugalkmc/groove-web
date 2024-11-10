@@ -9,9 +9,9 @@ import cookieParser from "cookie-parser";
 import responseTime from "response-time";
 
 // importing routers
-import feedbackRoutes from './routes/feedbacks.js'
-import profileRoutes from './routes/profile.js'
-import projectRoutes from './routes/project.js'
+import feedbackRoutes from './routes/feedbacks.js';
+import profileRoutes from './routes/profile.js';
+import projectRoutes from './routes/project.js';
 
 mongodbConnect();
 
@@ -39,7 +39,7 @@ const customMorgan = (req, res, next) => {
 };
 
 app.use(customMorgan);
-app.use(cookieParser())
+app.use(cookieParser());
 
 
 const allowedOrigins = ['http://localhost:3000', 'https://groove-ai-web.vercel.app'];
@@ -76,11 +76,11 @@ app.use(authMiddleware);
 app.use(attachUserToRequest);
 app.use(errorHandler);
 
-app.use('/api/profile', profileRoutes)
-app.use('/api/project', projectRoutes)
+app.use('/api/profile', profileRoutes);
+app.use('/api/project', projectRoutes);
 
 app.post('/api/auth', (req, res) => {
-    return res.status(200).json({ message: 'Json web token is valid' })
+    return res.status(200).json({ message: 'Json web token is valid' });
 })
 
 app.get("/healthcheck", (req, res) => {
@@ -88,10 +88,10 @@ app.get("/healthcheck", (req, res) => {
 });
 
 app.use(errorHandler);
-const PORT = 3001
-app.listen(PORT, () => {
-    console.log(`Server started, Listening to PORT: ${PORT}`);
-});
+const PORT = 3001;
+// app.listen(PORT, () => {
+//     console.log(`Server started, Listening to PORT: ${PORT}`);
+// });
 
 
-// export default app;
+export default app;

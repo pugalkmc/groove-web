@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:3001";
-// const BASE_URL = "https://groove-ai-server.vercel.app"
+// const BASE_URL = "http://localhost:3001";
+const BASE_URL = "https://groove-ai-server.vercel.app"
 
 const axiosInstance = axios.create({
   withCredentials: true, // Ensure cookies are sent with cross-origin requests

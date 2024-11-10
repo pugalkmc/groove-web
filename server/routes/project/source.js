@@ -1,17 +1,17 @@
-import express from 'express'
+import express from 'express';
 import multer from "multer";
 import path from "path";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { deleteWithTag, index } from "../../database/pinecone_config.js"
+import { deleteWithTag, index } from "../../database/pinecone_config.js";
 import mongoose from "mongoose";
 import axios from "axios";
 import { WORKER_URL } from '../../config.js';
 import Source from '../../database/models/source.js';
 import { fileURLToPath } from 'url';
-import fs from 'fs'
+import fs from 'fs';
 
-const router = express.Router()
+const router = express.Router();
 
 // Helper function to get __dirname in ES6 modules
 const __filename = fileURLToPath(import.meta.url);
@@ -39,7 +39,7 @@ router.post('/file', upload.single('file'), async (req, res) => {
         const docs = await loader.load();
         fs.unlinkSync(filePath);
 
-        const formatted = docs.map(doc => doc.pageContent)
+        const formatted = docs.map(doc => doc.pageContent);
         // Create and save new source
         const newSource = new Source({
             manager: new mongoose.Types.ObjectId(_id),
@@ -130,8 +130,8 @@ router.delete("/file/:id", async (req, res) => {
         await Source.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id), type: 'file' });
         return res.sendStatus(200);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: error });
+        // console.error(error);
+        return res.status(500).json({ error: "Please try again later" });
     }
 });
 
@@ -139,7 +139,7 @@ router.delete("/file/:id", async (req, res) => {
 router.get("/", async (req, res) => {
     const { _id } = req.user;
     try {
-        const sources = await Source.find({ manager: new mongoose.Types.ObjectId(_id) }, { "tag": 1, "values.0": 1, type: 1 });
+        const sources = await Source.find({ manager: new mongoose.Types.ObjectId(_id) }, { "tag": 1, "values.0": 1, type: 1 , isStoredAtVectorDb: 1});
         return res.status(200).json(sources);
     } catch (error) {
         console.error(error);
